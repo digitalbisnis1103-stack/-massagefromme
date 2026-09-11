@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title> massagefromme</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      font-family: "Poppins", sans-serif;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      color: white;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(105, 64, 150, 0.65),
+          rgba(194, 143, 221, 0.55)
+        ),
+        url("background.jpg") center center / cover fixed no-repeat;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      outline: none;
+    }
+
+    /* =========================
+       LOADING SCREEN
+    ========================= */
+
+    .loading-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+      padding: 25px;
+      text-align: center;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(103, 57, 145, 0.96),
+          rgba(210, 155, 230, 0.94)
+        ),
+        url("background.jpg") center / cover no-repeat;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .loading-screen.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .loading-screen img {
+      width: 125px;
+      height: 125px;
+      object-fit: cover;
+      border-radius: 50%;
+      box-shadow: 0 0 35px rgba(255, 255, 255, 0.45);
+      animation: pulse 2s infinite;
+    }
+
+    .loading-screen h1 {
+      font-family: "Baloo 2", cursive;
+      font-size: clamp(28px, 6vw, 48px);
+      line-height: 1.2;
+      text-shadow: 0 3px 12px rgba(80, 30, 90, 0.25);
+    }
+
+    .loading-screen p {
+      max-width: 420px;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .start-btn {
+      margin-top: 10px;
+      padding: 13px 28px;
+      border-radius: 999px;
+      color: #8d4ca9;
+      background: white;
+      font-weight: 700;
+      box-shadow: 0 8px 22px rgba(77, 31, 95, 0.25);
+      transition: 0.3s ease;
+    }
+
+    .start-btn:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    /* =========================
+       MAIN PAGE
+    ========================= */
+
+    .main-wrapper {
+      position: relative;
+      min-height: 100vh;
+      padding: 25px 15px 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .page {
+      display: none;
+      width: 100%;
+      max-width: 650px;
+      min-height: 650px;
+      padding: 45px 30px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      animation: pageIn 0.7s ease;
+    }
+
+    .page.active {
+      display: flex;
+    }
+
+    .page-image {
+      width: 145px;
+      height: 145px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 25px;
+      border: 5px solid rgba(255, 255, 255, 0.7);
+      box-shadow:
+        0 0 0 8px rgba(255, 255, 255, 0.12),
+        0 12px 35px rgba(75, 30, 100, 0.25);
+      animation: floatImage 4s ease-in-out infinite;
+    }
+
+    .page h1 {
+      font-family: "Baloo 2", cursive;
+      font-size: clamp(30px, 6vw, 48px);
+      line-height: 1.15;
+      margin-bottom: 25px;
+      color: white;
+      text-shadow: 0 3px 12px rgba(76, 29, 100, 0.3);
+    }
+
+    .content-card {
+      width: 100%;
+      padding: 25px 28px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.17);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(13px);
+      -webkit-backdrop-filter: blur(13px);
+      box-shadow: 0 15px 45px rgba(76, 33, 99, 0.16);
+    }
+
+    .content-card p {
+      margin-bottom: 17px;
+      font-size: clamp(14px, 2.7vw, 17px);
+      line-height: 1.9;
+      text-align: justify;
+      text-justify: inter-word;
+      color: white;
+      text-shadow: 0 1px 4px rgba(76, 28, 98, 0.25);
+    }
+
+    .content-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    .button-area {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      position: relative;
+      min-height: 55px;
+      width: 100%;
+    }
+
+    .next-btn,
+    .skip-btn {
+      padding: 13px 25px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      transition: 0.3s ease;
+      box-shadow: 0 8px 22px rgba(83, 36, 105, 0.22);
+    }
+
+    .next-btn {
+      color: #8c4ca6;
+      background: white;
+    }
+
+    .skip-btn {
+      position: relative;
+      color: white;
+      background: rgba(120, 66, 145, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .next-btn:hover,
+    .skip-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    /* =========================
+       PROGRESS DOT
+    ========================= */
+
+    .progress {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      display: flex;
+      gap: 7px;
+    }
+
+    .progress span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.35);
+      transition: 0.3s ease;
+    }
+
+    .progress span.active {
+      width: 25px;
+      border-radius: 999px;
+      background: white;
+    }
+
+    /* =========================
+       MUSIC BUTTON
+    ========================= */
+
+    .music-control {
+      position: fixed;
+      right: 18px;
+      top: 18px;
+      z-index: 50;
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      color: #8d4ca9;
+      background: rgba(255, 255, 255, 0.9);
+      font-size: 18px;
+      box-shadow: 0 7px 20px rgba(73, 29, 94, 0.2);
+    }
+
+    /* =========================
+       AWAN PUTIH
+    ========================= */
+
+    .cloud {
+      position: fixed;
+      width: 180px;
+      height: 55px;
+      background: rgba(255, 255, 255, 0.82);
+      border-radius: 100px;
+      filter: blur(1px);
+      opacity: 0.65;
+      z-index: 1;
+      pointer-events: none;
+      animation: cloudMove 45s linear infinite;
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: "";
+      position: absolute;
+      background: rgba(255, 255, 255, 0.88);
+      border-radius: 50%;
+    }
+
+    .cloud::before {
+      width: 80px;
+      height: 80px;
+      left: 25px;
+      bottom: 15px;
+    }
+
+    .cloud::after {
+      width: 105px;
+      height: 105px;
+      right: 25px;
+      bottom: 10px;
+    }
+
+    .cloud-one {
+      top: 12%;
+      left: -250px;
+      animation-duration: 55s;
+    }
+
+    .cloud-two {
+      top: 43%;
+      left: -300px;
+      transform: scale(0.75);
+      animation-duration: 70s;
+      animation-delay: 8s;
+      opacity: 0.45;
+    }
+
+    .cloud-three {
+      top: 72%;
+      left: -250px;
+      transform: scale(0.55);
+      animation-duration: 62s;
+      animation-delay: 15s;
+      opacity: 0.4;
+    }
+
+    @keyframes cloudMove {
+      0% {
+        transform: translateX(-250px);
+      }
+
+      100% {
+        transform: translateX(calc(100vw + 400px));
+      }
+    }
+
+    /* =========================
+       GELEMBUNG
+    ========================= */
+
+    .bubble {
+      position: fixed;
+      bottom: -100px;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.65);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow:
+        inset 3px 3px 8px rgba(255, 255, 255, 0.45),
+        0 0 15px rgba(255, 255, 255, 0.18);
+      z-index: 3;
+      pointer-events: none;
+      animation: bubbleFloat 12s linear infinite;
+    }
+
+    .bubble::before {
+      content: "";
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      top: 5px;
+      left: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .bubble-one {
+      left: 8%;
+      width: 22px;
+      height: 22px;
+      animation-duration: 14s;
+    }
+
+    .bubble-two {
+      left: 27%;
+      width: 42px;
+      height: 42px;
+      animation-duration: 19s;
+      animation-delay: 3s;
+    }
+
+    .bubble-three {
+      left: 52%;
+      width: 18px;
+      height: 18px;
+      animation-duration: 11s;
+      animation-delay: 5s;
+    }
+
+    .bubble-four {
+      left: 75%;
+      width: 35px;
+      height: 35px;
+      animation-duration: 16s;
+      animation-delay: 2s;
+    }
+
+    .bubble-five {
+      left: 91%;
+      width: 20px;
+      height: 20px;
+      animation-duration: 13s;
+      animation-delay: 7s;
+    }
+
+    @keyframes bubbleFloat {
+      0% {
+        transform: translateY(0) translateX(0) scale(0.7);
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 0.7;
+      }
+
+      50% {
+        transform: translateY(-50vh) translateX(35px) scale(1);
+      }
+
+      80% {
+        opacity: 0.45;
+      }
+
+      100% {
+        transform: translateY(-120vh) translateX(-35px) scale(1.15);
+        opacity: 0;
+      }
+    }
+
+    /* =========================
+       BUNGA LAVENDER
+    ========================= */
+
+    .lavender {
+      position: fixed;
+      bottom: -80px;
+      color: #ead7ff;
+      font-size: 30px;
+      text-shadow:
+        0 0 8px rgba(255, 255, 255, 0.75),
+        0 0 15px rgba(190, 145, 235, 0.6);
+      z-index: 4;
+      pointer-events: none;
+      opacity: 0.8;
+      animation: lavenderFly 17s linear infinite;
+    }
+
+    .lavender-one {
+      left: 5%;
+      animation-duration: 18s;
+    }
+
+    .lavender-two {
+      left: 22%;
+      font-size: 23px;
+      animation-duration: 22s;
+      animation-delay: 4s;
+    }
+
+    .lavender-three {
+      left: 40%;
+      font-size: 34px;
+      animation-duration: 20s;
+      animation-delay: 7s;
+    }
+
+    .lavender-four {
+      left: 61%;
+      font-size: 26px;
+      animation-duration: 24s;
+      animation-delay: 2s;
+    }
+
+    .lavender-five {
+      left: 80%;
+      font-size: 36px;
+      animation-duration: 19s;
+      animation-delay: 5s;
+    }
+
+    .lavender-six {
+      left: 94%;
+      font-size: 22px;
+      animation-duration: 21s;
+      animation-delay: 9s;
+    }
+
+    @keyframes lavenderFly {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 0.85;
+      }
+
+      35% {
+        transform: translateY(-35vh) translateX(45px) rotate(120deg);
+      }
+
+      65% {
+        transform: translateY(-70vh) translateX(-40px) rotate(240deg);
+      }
+
+      100% {
+        transform: translateY(-120vh) translateX(60px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* =========================
+       FLOATING HEARTS
+    ========================= */
+
+    .floating-heart,
+    .floating-star {
+      position: fixed;
+      pointer-events: none;
+      z-index: 2;
+      user-select: none;
+      animation: floatUp linear infinite;
+      opacity: 0.7;
+    }
+
+    .floating-heart {
+      color: #ffd8f4;
+      font-size: 22px;
+    }
+
+    .floating-star {
+      color: white;
+      font-size: 15px;
+    }
+
+    @keyframes floatUp {
+      from {
+        transform: translateY(110vh) rotate(0deg);
+      }
+
+      to {
+        transform: translateY(-120px) rotate(360deg);
+      }
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 600px) {
+      .main-wrapper {
+        padding: 20px 12px 60px;
+      }
+
+      .page {
+        min-height: auto;
+        padding: 35px 8px;
+      }
+
+      .page-image {
+        width: 115px;
+        height: 115px;
+        margin-bottom: 20px;
+      }
+
+      .content-card {
+        padding: 22px 20px;
+        border-radius: 24px;
+      }
+
+      .content-card p {
+        line-height: 1.8;
+        text-align: justify;
+      }
+
+      .button-area {
+        margin-top: 25px;
+      }
+
+      .next-btn,
+      .skip-btn {
+        padding: 12px 21px;
+        font-size: 13px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cloud,
+      .bubble,
+      .lavender,
+      .floating-heart,
+      .floating-star,
+      .page-image,
+      .loading-screen img {
+        animation: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- AWAN PUTIH -->
+  <div class="cloud cloud-one"></div>
+  <div class="cloud cloud-two"></div>
+  <div class="cloud cloud-three"></div>
+
+  <!-- GELEMBUNG -->
+  <div class="bubble bubble-one"></div>
+  <div class="bubble bubble-two"></div>
+  <div class="bubble bubble-three"></div>
+  <div class="bubble bubble-four"></div>
+  <div class="bubble bubble-five"></div>
+
+  <!-- BUNGA LAVENDER -->
+  <div class="lavender lavender-one">✿</div>
+  <div class="lavender lavender-two">❀</div>
+  <div class="lavender lavender-three">✿</div>
+  <div class="lavender lavender-four">❀</div>
+  <div class="lavender lavender-five">✿</div>
+  <div class="lavender lavender-six">❀</div>
+
+  <!-- LOADING SCREEN -->
+  <div class="loading-screen" id="loadingScreen">
+    <img src="icon4.gif" alt="Cute icon" />
+
+    <h1>For my pretty girl 🤍</h1>
+
+    <p>
+      ada sedikit sesuatu yang aku siapin buat kamu.
+      bacanya pelan-pelan yaa 🫶🏻
+    </p>
+
+    <button class="start-btn" id="startBtn">
+      TAP TO OPEN 🤍
+    </button>
+  </div>
+
+  <!-- MUSIK -->
+  <audio id="bgMusic" loop>
+    <source src="sorry.mp3" type="audio/mpeg" />
+  </audio>
+
+  <button class="music-control" id="musicControl" title="Play / Pause Music">
+    ♫
+  </button>
+
+  <!-- ISI WEBSITE -->
+  <div class="main-wrapper">
+
+    <!-- PAGE 1 -->
+    <section class="page active" id="page1">
+      <img src="icon1.gif" alt="Cute icon" class="page-image" />
+
+      <h1>A little something for my pretty girl 🤍</h1>
+
+      <div class="content-card">
+        <p>haloo derrr 🫶🏻</p>
+
+        <p>
+          akuu cuma mauu nyampeinn beberapa hal yang mungkin belum sempet
+          akuu bilang ke kamuu akhirr akhirr inii 🤍
+        </p>
+      </div>
+
+      <div class="button-area">
+        <button class="next-btn" onclick="showPage(2)">
+          I want to read
+        </button>
+
+        <button class="skip-btn" id="skipBtn">
+          Skip
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 2 -->
+    <section class="page" id="page2">
+      <img src="icon6.jpg" alt="Cute icon" class="page-image" />
+
+      <h1>I'm sooo proud of youu🤍</h1>
+
+      <div class="content-card">
+        <p>
+          akuu liatt kamuu berangkatt PKL dari pagi, pulangg sore,
+          ngadepinn banyak hal setiap harinya.
+        </p>
+
+        <p>
+          mungkin buat kamuu itu hal biasa.
+        </p>
+
+        <p>
+          tapi buat akuu, itu sesuatu yang hebatt.
+        </p>
+
+        <p>
+          karenaa walaupun capee, kamuu tetap jalanin semuanya sampai selesai
+        </p>
+      </div>
+
+      <div class="button-area">
+        <button class="next-btn" onclick="showPage(3)">
+          Continue🤍
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 3 -->
+    <section class="page" id="page3">
+      <img src="icon3.gif" alt="Cute icon" class="page-image" />
+
+      <h1>I notice you, every single day🤍</h1>
+
+      <div class="content-card">
+        <p>
+          akuu mungkin gaa selalu bisa bantu banyak.
+        </p>
+
+        <p>
+          tapi percayaa dehh, akuu memperhatikan kamuu.
+        </p>
+
+        <p>
+          akuu perhatiin pas kamuu capee.
+        </p>
+
+        <p>
+          akuu perhatiin pas kamuu diem.
+        </p>
+
+        <p>
+          akuu perhatiin pas kamuu lagi banyak pikiran tapi milih buat
+          nyimpen semuanya sendiri.
+        </p>
+      </div>
+
+      <div class="button-area">
+        <button class="next-btn" onclick="showPage(4)">
+          lanjutt yaaa
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 4 -->
+    <section class="page" id="page4">
+      <img src="icon4.jpg" alt="Cute icon" class="page-image" />
+
+      <h1>I'm sorry, Derr 🤍</h1>
+
+      <div class="content-card">
+        <p>
+          akhir akhir inii akuu sadar kadang akuu terlalu fokus sama apa
+          yang akuu rasain.
+        </p>
+
+        <p>
+          sampai lupa buat lebih peka sama apa yang lagi kamuu rasainn.
+        </p>
+
+        <p>
+          kadang akuu ngajak ngobrol di waktu yang kurang tepat.
+        </p>
+
+        <p>
+          kadang akuu terlalu semangat sampai lupa kalau kamuu juga butuh
+          istirahat.
+        </p>
+
+        <p>
+          maaff yaa derrr 🤍
+        </p>
+      </div>
+
+      <div class="button-area">
+        <button class="next-btn" onclick="showPage(5)">
+          continue🫶🏻
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 5 -->
+    <section class="page" id="page5">
+      <img src="icon5.gif" alt="Cute icon" class="page-image" />
+
+      <h1>I want to understand you better 🤍</h1>
+
+      <div class="content-card">
+        <p>
+          akuu gaa mau jadi seseorang yang nambah beban buat kamuu.
+        </p>
+
+        <p>
+          akuu pengennya jadi orang yang bisa bikin hari kamuu sedikit
+          lebih ringan.
+        </p>
+
+        <p>
+          jadi kalau suatu saat kamuu lagi capee, sedih, kesel, atau cuma
+          pengen diem aja...
+        </p>
+
+        <p>
+          gapapaa kok.
+        </p>
+
+        <p>
+          akuu akan berusaha lebih ngerti keadaan kamuu.
+        </p>
+      </div>
+
+      <div class="button-area">
+        <button class="next-btn" onclick="showPage(6)">
+          ini terakhir koo hehe...😙
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 6 -->
+    <section class="page" id="page6">
+      <img src="icon6.gif" alt="Cute icon" class="page-image" />
+
+      <h1>For the strongest pretty girl🤍</h1>
+
+      <div class="content-card">
+        <p>
+          kamuu gaa harus selalu keliatan kuat setiap saat.
+        </p>
+
+        <p>
+          kamuu gaa harus selalu bilang "aku gapapa" kalau memang lagi capee.
+        </p>
+
+        <p>
+          dan kamuu gaa harus ngelewatin semuanya sendirian.
+        </p>
+      </div>
+
+      <div class="button-area">
+        <button class="next-btn" onclick="showPage(7)">
+          dikitt lagii😆
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 7 -->
+    <section class="page" id="page7">
+      <img src="icon7.jpg" alt="Cute icon" class="page-image" />
+
+      <h1>A little reminder 🤍</h1>
+
+      <div class="content-card">
+        <p>
+          if youu want to talk with me sometimes,
+        </p>
+
+        <p>
+          i'm here to listen and understand your feelings.
+        </p>
+
+        <p>
+          tanpa dihakimi
+        </p>
+
+        <p>
+          tanpa dipaksa
+        </p>
+
+        <p>
+          tanpa harus pura pura kuat
+        </p>
+      </div>
+
+      <div class="button-area">
+        <button class="next-btn" onclick="showPage(8)">
+          janjii inii yangg terakhirr😙
+        </button>
+      </div>
+    </section>
+
+    <!-- PAGE 8 -->
+    <section class="page" id="page8">
+      <img src="icon8.gif" alt="Cute icon" class="page-image" />
+
+      <h1>One last thing...🤍</h1>
+
+      <div class="content-card">
+        <p>
+          makasiii yaa cantikk.
+        </p>
+
+        <p>
+          buat semua usaha kamuu.
+        </p>
+
+        <p>
+          buat semua waktu yang pernah kamuu kasih ke akuu.
+        </p>
+
+        <p>
+          buat semua hal yang mungkin gaa pernah akuu sadari sepenuhnya.
+        </p>
+
+        <p>
+          i loveee youuu derrr 🫶🏻🤍
+        </p>
+
+        <p>
+          please take care of yourself for me, okay? ✨🤍
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress" id="progress">
+    <span class="active"></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <script>
+    const loadingScreen = document.getElementById("loadingScreen");
+    const startBtn = document.getElementById("startBtn");
+    const bgMusic = document.getElementById("bgMusic");
+    const musicControl = document.getElementById("musicControl");
+    const skipBtn = document.getElementById("skipBtn");
+    const progressDots = document.querySelectorAll("#progress span");
+
+    let musicPlaying = false;
+    let currentPage = 1;
+
+    /* =========================
+       START WEBSITE
+    ========================= */
+
+    startBtn.addEventListener("click", () => {
+      loadingScreen.classList.add("hide");
+
+      bgMusic
+        .play()
+        .then(() => {
+          musicPlaying = true;
+          musicControl.textContent = "Ⅱ";
+        })
+        .catch(() => {
+          musicPlaying = false;
+          musicControl.textContent = "♫";
+        });
+    });
+
+    /* =========================
+       MUSIC CONTROL
+    ========================= */
+
+    musicControl.addEventListener("click", () => {
+      if (musicPlaying) {
+        bgMusic.pause();
+        musicPlaying = false;
+        musicControl.textContent = "♫";
+      } else {
+        bgMusic
+          .play()
+          .then(() => {
+            musicPlaying = true;
+            musicControl.textContent = "Ⅱ";
+          })
+          .catch(() => {
+            musicPlaying = false;
+            musicControl.textContent = "♫";
+          });
+      }
+    });
+
+    /* =========================
+       PAGE NAVIGATION
+    ========================= */
+
+    function showPage(pageNumber) {
+      document.querySelectorAll(".page").forEach((page) => {
+        page.classList.remove("active");
+      });
+
+      const selectedPage = document.getElementById("page" + pageNumber);
+
+      if (selectedPage) {
+        selectedPage.classList.add("active");
+        currentPage = pageNumber;
+
+        progressDots.forEach((dot, index) => {
+          dot.classList.toggle("active", index === pageNumber - 1);
+        });
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      }
+    }
+
+    /* =========================
+       SKIP BUTTON KABUR
+    ========================= */
+
+    function moveSkipButton() {
+      const area = skipBtn.parentElement;
+      const areaRect = area.getBoundingClientRect();
+
+      const maxX = Math.max(0, areaRect.width - skipBtn.offsetWidth);
+      const maxY = Math.max(0, areaRect.height - skipBtn.offsetHeight);
+
+      const randomX = Math.random() * maxX - maxX / 2;
+      const randomY = Math.random() * maxY - maxY / 2;
+
+      skipBtn.style.transform =
+        `translate(${randomX}px, ${randomY}px)`;
+    }
+
+    skipBtn.addEventListener("mouseenter", moveSkipButton);
+
+    skipBtn.addEventListener("touchstart", (event) => {
+      event.preventDefault();
+      moveSkipButton();
+    });
+
+    skipBtn.addEventListener("click", moveSkipButton);
+
+    /* =========================
+       FLOATING HEARTS
+    ========================= */
+
+    function createFloatingElement(className, symbol) {
+      const element = document.createElement("div");
+
+      element.className = className;
+      element.textContent = symbol;
+      element.style.left = Math.random() * 100 + "%";
+      element.style.animationDuration = 8 + Math.random() * 10 + "s";
+      element.style.fontSize = 14 + Math.random() * 18 + "px";
+
+      document.body.appendChild(element);
+
+      setTimeout(() => {
+        element.remove();
+      }, 22000);
+    }
+
+    for (let i = 0; i < 25; i++) {
+      createFloatingElement("floating-heart", "♡");
+    }
+
+    for (let i = 0; i < 20; i++) {
+      createFloatingElement("floating-star", "✦");
+    }
+
+    setInterval(() => {
+      createFloatingElement("floating-heart", "♡");
+    }, 1800);
+
+    setInterval(() => {
+      createFloatingElement("floating-star", "✦");
+    }, 2200);
+
+    /* =========================
+       BUNGA LAVENDER TAMBAHAN
+    ========================= */
+
+    function createLavender() {
+      const flower = document.createElement("div");
+
+      flower.className = "lavender";
+      flower.textContent = Math.random() > 0.5 ? "✿" : "❀";
+      flower.style.left = Math.random() * 100 + "%";
+      flower.style.fontSize = 18 + Math.random() * 22 + "px";
+      flower.style.animationDuration = 14 + Math.random() * 10 + "s";
+
+      document.body.appendChild(flower);
+
+      setTimeout(() => {
+        flower.remove();
+      }, 26000);
+    }
+
+    setInterval(createLavender, 1800);
+
+    /* =========================
+       GELEMBUNG TAMBAHAN
+    ========================= */
+
+    function createBubble() {
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+
+      const size = 12 + Math.random() * 35;
+
+      bubble.style.left = Math.random() * 100 + "%";
+      bubble.style.width = size + "px";
+      bubble.style.height = size + "px";
+      bubble.style.animationDuration = 10 + Math.random() * 12 + "s";
+
+      document.body.appendChild(bubble);
+
+      setTimeout(() => {
+        bubble.remove();
+      }, 24000);
+    }
+
+    setInterval(createBubble, 1300);
+  </script>
+</body>
+</html>
